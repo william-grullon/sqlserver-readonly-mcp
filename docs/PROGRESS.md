@@ -5,7 +5,7 @@
 | 0 Kickoff | Done 2026-11-13 | SDK chosen (ModelContextProtocol 2.4.0), design drafted in `docs/DESIGN.md`, repo scaffolded |
 | 1 Database | **Done 2026-11-13** | `docker compose up -d` from a clean volume: db-init exits 0; `dotnet test` 61/61 pass. See log below |
 | 2 MCP server | Done 2026-11-13 | Four tools verified through Claude Code against container; 67 tests pass. See PHASE2.md. |
-| 3 Permission proof | Not started | DB-side denial tests already exist in `tests/HarborSupply.Db.Tests` (Phase 3 adds the server-guard tests) |
+| 3 Permission proof | **Done 2026-11-13** | 109/109 tests pass covering DB-side denials (dbo SELECT/writes, view writes, DDL, roles), excluded sensitive columns, server AST guard rejections (DML/DDL, multi-statement/batch, EXEC, INTO, TVFs/OPENROWSET, hints, FOR XML, scalar UDFs, post-2012 syntax), row cap truncation, command timeout, and JSONL audit log. |
 | 4 Reconciliation and docs | Not started | |
 | 5 Stretch: Data API Builder | Not started | |
 
@@ -17,6 +17,12 @@
   - Verified: clean volume -> db-init exit 0 -> `dotnet test` 61 passed, 0 failed. db-init run a second time on the same volume exits 0 and leaves the data byte-identical (fixed fingerprint in `SeedTests.cs`). Mutation check: granting `SELECT` on `dbo` to `mcp_reader` turns the 9 dbo-select tests red; restoring via db-init turns them green.
   - Seed result: Customer 150, Vendor 40, Item 300, Invoice 6,075 (67 void), InvoiceLine 24,305, CustomerPayment 5,113, PaymentApplication 5,355, Bill 1,200, BillPayment 1,077. 312 invoices >60 days past due; open vendor bills in all five aging buckets.
   - Machine: Docker Desktop and .NET 8 SDK now installed. Tests read `HARBOR_MCP_CONNECTION` and `HARBOR_ADMIN_CONNECTION` from the environment, falling back to the repo-root `.env`.
+
+- **2026-11-13 (Phase 2):** Built and verified the stdio MCP server (`src/HarborSupply.Mcp/Program.cs`, `tests/HarborSupply.Db.Tests/McpTests.cs`, `docs/PHASE2.md`). 67 tests pass.
+- **2026-11-13 (Phase 3):** Completed permission proof and server-guard test coverage.
+  - Hardened `ReportingTools.Validate` in `src/HarborSupply.Mcp/Program.cs` to also reject table hints (`WITH (NOLOCK)`), `FOR XML`/`FOR BROWSE` clauses, and schema/target-qualified scalar function calls (`dbo.fn...`) in addition to non-SELECT statements, `INTO`, multiple batches/statements, unapproved objects, and non-view table sources.
+  - Expanded `tests/HarborSupply.Db.Tests/McpTests.cs` to cover 38 rejected SQL patterns, 6 valid reporting query shapes, end-to-end stdio rejection of unapproved objects/sensitive columns/invalid `sample_rows` bounds, row-cap truncation (`HARBOR_MCP_ROW_CAP=10` returning `rowCount=10, truncated=true` vs `truncated=false`), command timeout enforcement (`HARBOR_MCP_TIMEOUT_SECONDS=1` aborting a heavy cross join), and JSONL audit log verification (`ok` and `error` outcomes).
+  - Verified: `dotnet test -m:1 --no-restore` passes 109/109 tests.
 
 ### Deviations from DESIGN.md (owner to confirm or reject)
 
@@ -31,5 +37,5 @@
 - On Windows Git Bash, `docker exec ... /opt/...` paths get rewritten; use `MSYS_NO_PATHCONV=1`.
 - The local `.env` had a reader password in `HARBOR_MCP_CONNECTION` that did not match `MCP_READER_PASSWORD`; it was synced (gitignored file, values not shown). Keep the two equal when changing either.
 - Expected-answer anchors for Phase 4 are the fingerprint constants in `tests/HarborSupply.Db.Tests/SeedTests.cs` (sales invoice total 23,669,600.17; AP bill total 15,633,431.91).
-- Next: Phase 3 (permission proof).
+- Next: Phase 4 (reconciliation and docs).
 

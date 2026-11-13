@@ -139,8 +139,29 @@ public sealed class ReportingTools
     {
         private readonly HashSet<string> _cteNames = new(ctes, StringComparer.OrdinalIgnoreCase);
 
+        public override void Visit(QuerySpecification node)
+        {
+            if (node.ForClause != null)
+            {
+                throw new ArgumentException("FOR clauses are not allowed.");
+            }
+        }
+
+        public override void Visit(FunctionCall node)
+        {
+            if (node.CallTarget != null)
+            {
+                throw new ArgumentException("User-defined and schema-qualified scalar functions are not allowed.");
+            }
+        }
+
         public override void Visit(NamedTableReference node)
         {
+            if (node.TableHints.Count > 0)
+            {
+                throw new ArgumentException("Table hints are not allowed.");
+            }
+
             var identifiers = node.SchemaObject.Identifiers;
 
             // Allow unqualified references only when they match a CTE declared in the same query.
