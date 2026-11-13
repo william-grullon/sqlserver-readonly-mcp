@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{759A15BE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarborSupply.Db.Tests", "tests\HarborSupply.Db.Tests\HarborSupply.Db.Tests.csproj", "{419CD127-1FB6-442F-8848-B8B9ACB077EF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A67A5C42-8021-458E-B703-F84701D7D2DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarborSupply.Mcp", "src\HarborSupply.Mcp\HarborSupply.Mcp.csproj", "{0A21E312-EE51-4DF3-B349-9AE3F6E10996}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{419CD127-1FB6-442F-8848-B8B9ACB077EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{419CD127-1FB6-442F-8848-B8B9ACB077EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{419CD127-1FB6-442F-8848-B8B9ACB077EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A21E312-EE51-4DF3-B349-9AE3F6E10996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A21E312-EE51-4DF3-B349-9AE3F6E10996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A21E312-EE51-4DF3-B349-9AE3F6E10996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A21E312-EE51-4DF3-B349-9AE3F6E10996}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{419CD127-1FB6-442F-8848-B8B9ACB077EF} = {759A15BE-CA84-4435-8773-7D36A2686775}
+		{0A21E312-EE51-4DF3-B349-9AE3F6E10996} = {A67A5C42-8021-458E-B703-F84701D7D2DD}
 	EndGlobalSection
 EndGlobal

@@ -4,7 +4,7 @@
 |---|---|---|
 | 0 Kickoff | Done 2026-11-13 | SDK chosen (ModelContextProtocol 2.4.0), design drafted in `docs/DESIGN.md`, repo scaffolded |
 | 1 Database | **Done 2026-11-13** | `docker compose up -d` from a clean volume: db-init exits 0; `dotnet test` 61/61 pass. See log below |
-| 2 MCP server | Not started | |
+| 2 MCP server | Done 2026-11-13 | Four tools verified through Claude Code against container; 67 tests pass. See PHASE2.md. |
 | 3 Permission proof | Not started | DB-side denial tests already exist in `tests/HarborSupply.Db.Tests` (Phase 3 adds the server-guard tests) |
 | 4 Reconciliation and docs | Not started | |
 | 5 Stretch: Data API Builder | Not started | |
@@ -31,4 +31,5 @@
 - On Windows Git Bash, `docker exec ... /opt/...` paths get rewritten; use `MSYS_NO_PATHCONV=1`.
 - The local `.env` had a reader password in `HARBOR_MCP_CONNECTION` that did not match `MCP_READER_PASSWORD`; it was synced (gitignored file, values not shown). Keep the two equal when changing either.
 - Expected-answer anchors for Phase 4 are the fingerprint constants in `tests/HarborSupply.Db.Tests/SeedTests.cs` (sales invoice total 23,669,600.17; AP bill total 15,633,431.91).
-- Next: Phase 2 (MCP server). Not started.
+- Next: Phase 3 (permission proof).
+

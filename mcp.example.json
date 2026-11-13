@@ -1,0 +1,1 @@
+{"mcpServers":{"harbor":{"command":"dotnet","args":["src/HarborSupply.Mcp/bin/Debug/net8.0/HarborSupply.Mcp.dll"]}}}
