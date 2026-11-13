@@ -1,0 +1,42 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: harbor-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in .env}
+    ports:
+      - "${MSSQL_PORT:-14333}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" -b -o /dev/null
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  # One-shot: waits for the healthcheck, runs db/setup.sql, exits.
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: harbor-db-init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: "no"
+    working_dir: /db
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in .env}
+      MCP_READER_PASSWORD: ${MCP_READER_PASSWORD:?set MCP_READER_PASSWORD in .env}
+    volumes:
+      - ./db:/db:ro
+    command:
+      - /bin/bash
+      - -c
+      - /opt/mssql-tools18/bin/sqlcmd -C -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -b -I -i /db/setup.sql -v McpReaderPassword="$$MCP_READER_PASSWORD"
+
+volumes:
+  sqlserver-data:
