@@ -38,5 +38,22 @@ services:
       - -c
       - /opt/mssql-tools18/bin/sqlcmd -C -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -b -I -i /db/setup.sql -v McpReaderPassword="$$MCP_READER_PASSWORD"
 
+  # Phase 5 variant (opt-in): Data API Builder's built-in SQL MCP server over the same views.
+  #   docker compose --profile dab up -d dab      ->  http://localhost:5000/mcp
+  dab:
+    profiles: ["dab"]
+    image: mcr.microsoft.com/azure-databases/data-api-builder:2.1.7
+    container_name: harbor-dab
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      # Same read-only login as the .NET server; never sa.
+      DAB_CONNECTION_STRING: Server=sqlserver,1433;Database=HarborSupply;User Id=mcp_reader;Password=${MCP_READER_PASSWORD:?set MCP_READER_PASSWORD in .env};TrustServerCertificate=True;Encrypt=True
+    volumes:
+      - ./dab/dab-config.json:/App/dab-config.json:ro
+    ports:
+      - "${DAB_PORT:-5000}:5000"
+
 volumes:
   sqlserver-data:

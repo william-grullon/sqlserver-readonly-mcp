@@ -1,0 +1,197 @@
+{
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('DAB_CONNECTION_STRING')"
+  },
+  "runtime": {
+    "host": {
+      "mode": "production",
+      "cors": {
+        "origins": [],
+        "allow-credentials": false
+      }
+    },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp",
+      "description": "Read-only access to the Harbor Supply reporting views",
+      "dml-tools": {
+        "describe-entities": true,
+        "read-records": true,
+        "aggregate-records": true,
+        "create-record": false,
+        "update-record": false,
+        "delete-record": false,
+        "execute-entity": false
+      }
+    },
+    "rest": {
+      "enabled": false
+    },
+    "graphql": {
+      "enabled": false
+    }
+  },
+  "entities": {
+    "vReportingCalendar": {
+      "source": {
+        "object": "reporting.vReportingCalendar",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "AsOfDate",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vCustomers": {
+      "source": {
+        "object": "reporting.vCustomers",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "CustomerId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vItems": {
+      "source": {
+        "object": "reporting.vItems",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "ItemId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vVendors": {
+      "source": {
+        "object": "reporting.vVendors",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "VendorId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vSalesInvoices": {
+      "source": {
+        "object": "reporting.vSalesInvoices",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "InvoiceId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vSalesInvoiceLines": {
+      "source": {
+        "object": "reporting.vSalesInvoiceLines",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "InvoiceLineId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vCustomerPayments": {
+      "source": {
+        "object": "reporting.vCustomerPayments",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "PaymentId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    },
+    "vVendorBills": {
+      "source": {
+        "object": "reporting.vVendorBills",
+        "type": "view"
+      },
+      "fields": [
+        {
+          "name": "BillId",
+          "primary-key": true
+        }
+      ],
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            "read"
+          ]
+        }
+      ]
+    }
+  }
+}

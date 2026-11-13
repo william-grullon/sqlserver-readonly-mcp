@@ -7,7 +7,7 @@
 | 2 MCP server | Done 2026-11-13 | Four tools verified through Claude Code against container; 67 tests pass. See PHASE2.md. |
 | 3 Permission proof | **Done 2026-11-13** | 109/109 tests pass covering DB-side denials (dbo SELECT/writes, view writes, DDL, roles), excluded sensitive columns, server AST guard rejections (DML/DDL, multi-statement/batch, EXEC, INTO, TVFs/OPENROWSET, hints, FOR XML, scalar UDFs, post-2012 syntax), row cap truncation, command timeout, and JSONL audit log. |
 | 4 Reconciliation and docs | **Done 2026-11-13 (demo clip pending)** | 5 reference reports + independent base-table checks, real Claude transcript, README complete; 120/120 tests pass. Demo clip and CI not done. |
-| 5 Stretch: Data API Builder | Not started | |
+| 5 Stretch: Data API Builder | **Done 2026-11-13** | DAB 2.1.7 container (compose profile `dab`) serves the 8 views over its MCP endpoint; denial checks and 3 questions verified through it. |
 
 ## Session log
 
@@ -43,5 +43,6 @@
   - Finding: Claude matched Q1, Q3, Q5 cold. On Q2 and Q4 it picked a different, stated interpretation (2026 YTD vs full 2025; partial Q4 vs Q3). With the basis stated in the question both match. Recorded honestly in README and transcript.
   - A first reference-query bug (Q5 bucket edges in the test's independent SQL, not the report) was caught by the reconciliation test and fixed.
   - Not done: demo clip (needs recording by owner), GitHub Actions CI (BRIEF §9), repo topics/pinning. Note `docs/` and `BRIEF.md` are in `.gitignore`; the transcript lives in `db/reports/` so it is publishable.
-- Next: record demo clip, add CI, then optional Phase 5.
+- **2026-11-13 (wrap-up):** Added `.github/workflows/ci.yml` (compose up, wait for db-init, `dotnet test`; **not yet run on GitHub**, check the first Actions run), CI badge, `demo/SCRIPT.md` (clip must be recorded by the owner). Phase 5: `dab/dab-config.json`, `dab` compose profile, README section. DAB checks: tools/list, describe, read, unlisted entity denied, create_record disabled; Claude answered Q2/Q3/Q5 via DAB matching the reference. Finding: DAB minimum SQL Server 2016; no joins/free SQL.
+- Next: push, confirm CI green, record clip, repo topics and pinning (BRIEF §9).
 

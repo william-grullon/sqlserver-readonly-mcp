@@ -1,10 +1,12 @@
 # sqlserver-readonly-mcp
 
+[![CI](https://github.com/william-grullon/sqlserver-readonly-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/william-grullon/sqlserver-readonly-mcp/actions/workflows/ci.yml)
+
 A reference implementation of a **read-only Model Context Protocol (MCP) server** in C# / .NET 8 that lets Claude query an on-premises-style SQL Server database (`HarborSupply`, synthetic ERP data) through an approved `reporting` view layer only.
 
-> **Honest scope:** This is a working reference build on synthetic data ("Harbor Supply Co."), not a production deployment. Claude answers five business questions through read-only access, the answers reconcile to reference reports, and the permission denials are covered by automated tests. See [Limits](#limits-and-honest-scope). A Data API Builder variant is a possible stretch, not built.
+> **Honest scope:** This is a working reference build on synthetic data ("Harbor Supply Co."), not a production deployment. Claude answers five business questions through read-only access, the answers reconcile to reference reports, and the permission denials are covered by automated tests. See [Limits](#limits-and-honest-scope). A [Data API Builder variant](#variant-data-api-builder-phase-5) is included for comparison.
 
-**Demo clip:** _not yet recorded_ (add the link here).
+**Demo clip:** _not yet recorded_; the script and shot list are in [`demo/SCRIPT.md`](demo/SCRIPT.md).
 
 ## Architecture
 
@@ -114,6 +116,25 @@ Reproduce a reference answer yourself:
 docker exec -i harbor-sqlserver /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U mcp_reader -P "$MCP_READER_PASSWORD" -d HarborSupply < db/reports/q3.sql
 ```
 
+## Variant: Data API Builder (Phase 5)
+
+The same eight views, exposed through Microsoft's [Data API Builder](https://learn.microsoft.com/azure/data-api-builder/) (DAB) built-in SQL MCP server instead of the custom .NET server. Opt-in, so the default `docker compose up -d` is unchanged:
+
+```bash
+docker compose --profile dab up -d dab     # MCP over HTTP at http://localhost:5000/mcp
+claude --mcp-config dab/mcp.dab.example.json
+```
+
+Config is in [`dab/dab-config.json`](dab/dab-config.json) (image `data-api-builder:2.1.7`, same `mcp_reader` login, `anonymous` role with `read` only; create/update/delete/execute tools disabled).
+
+What I found (checked against the running container):
+
+- **DAB has its own MCP endpoint** (since 1.7), streamable HTTP or stdio. Tools: `describe_entities`, `read_records`, `aggregate_records` (read side) plus create/update/delete/execute, which the config turns off.
+- **Minimum SQL Server is 2016** per Microsoft's docs, so a true SQL Server 2012 instance needs the direct approach in this repo. DAB was only run here against the 2022 container.
+- **Same denials:** an unlisted table (`Customer`) returns `EntityNotFound`; `create_record` returns `ToolDisabled`; sensitive columns are unreachable because they are in no view and the login has no `dbo` rights.
+- **Answers still reconcile, with more client-side work:** asked through DAB only, Claude reproduced Q3 (312 invoices, 1,012,732.00), Q5 (grand total 1,770,371.07 and every bucket total) and Q2 (identical top 10 for 2026 YTD). DAB has no free-form SQL and no joins, so Claude had to pull customer and vendor names separately and could not build a vendor-by-bucket cross-tab in one call. Its own summary said so.
+- **Trade-off:** DAB is less code and more standard, but offers less flexibility than a guarded `run_query`; the custom server answers each question with one SELECT. The DAB host-header/origin options were not evaluated beyond setting empty CORS origins.
+
 ## SQL Server 2012 Compatibility Notes
 
 - The database runs on SQL Server 2022 in Docker with `COMPATIBILITY_LEVEL = 110` (`db/01-database.sql`) and uses `TSql110Parser` in the MCP server to approximate SQL Server 2012 syntax rules.
@@ -136,7 +157,7 @@ docker exec -i harbor-sqlserver /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U
 - stdio transport, a single SQL login, no end-user authentication or per-user row security.
 - The guard allows only plain `SELECT` over approved views. It is defense in depth; the database permissions are the real control.
 - Answers depend on Claude's reading of ambiguous questions (see Q2 and Q4 above); the server guarantees what Claude can read, not how it interprets it.
-- CI (GitHub Actions) and the demo clip are not set up yet.
+- The demo clip is not recorded. The CI workflow (`.github/workflows/ci.yml`) is written but has not run on GitHub yet.
 
 ## License
 
