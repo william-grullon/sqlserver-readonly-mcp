@@ -157,7 +157,7 @@ What I found (checked against the running container):
 - stdio transport, a single SQL login, no end-user authentication or per-user row security.
 - The guard allows only plain `SELECT` over approved views. It is defense in depth; the database permissions are the real control.
 - Answers depend on Claude's reading of ambiguous questions (see Q2 and Q4 above); the server guarantees what Claude can read, not how it interprets it.
-- The demo clip is not recorded. The CI workflow (`.github/workflows/ci.yml`) is written but has not run on GitHub yet.
+- The demo clip is not recorded yet. CI (`.github/workflows/ci.yml`) runs the full 120-test suite against a SQL Server 2022 container on every push and pull request.
 
 ## License
 

@@ -44,5 +44,6 @@
   - A first reference-query bug (Q5 bucket edges in the test's independent SQL, not the report) was caught by the reconciliation test and fixed.
   - Not done: demo clip (needs recording by owner), GitHub Actions CI (BRIEF §9), repo topics/pinning. Note `docs/` and `BRIEF.md` are in `.gitignore`; the transcript lives in `db/reports/` so it is publishable.
 - **2026-11-13 (wrap-up):** Added `.github/workflows/ci.yml` (compose up, wait for db-init, `dotnet test`; **not yet run on GitHub**, check the first Actions run), CI badge, `demo/SCRIPT.md` (clip must be recorded by the owner). Phase 5: `dab/dab-config.json`, `dab` compose profile, README section. DAB checks: tools/list, describe, read, unlisted entity denied, create_record disabled; Claude answered Q2/Q3/Q5 via DAB matching the reference. Finding: DAB minimum SQL Server 2016; no joins/free SQL.
-- Next: push, confirm CI green, record clip, repo topics and pinning (BRIEF §9).
+- CI green on GitHub (first run, commit 3a7630b). Repo description and topics set.
+- Next: record demo clip, pin repo, Upwork/LinkedIn (BRIEF §9).
 
