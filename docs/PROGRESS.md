@@ -6,7 +6,7 @@
 | 1 Database | **Done 2026-11-13** | `docker compose up -d` from a clean volume: db-init exits 0; `dotnet test` 61/61 pass. See log below |
 | 2 MCP server | Done 2026-11-13 | Four tools verified through Claude Code against container; 67 tests pass. See PHASE2.md. |
 | 3 Permission proof | **Done 2026-11-13** | 109/109 tests pass covering DB-side denials (dbo SELECT/writes, view writes, DDL, roles), excluded sensitive columns, server AST guard rejections (DML/DDL, multi-statement/batch, EXEC, INTO, TVFs/OPENROWSET, hints, FOR XML, scalar UDFs, post-2012 syntax), row cap truncation, command timeout, and JSONL audit log. |
-| 4 Reconciliation and docs | Not started | |
+| 4 Reconciliation and docs | **Done 2026-11-13 (demo clip pending)** | 5 reference reports + independent base-table checks, real Claude transcript, README complete; 120/120 tests pass. Demo clip and CI not done. |
 | 5 Stretch: Data API Builder | Not started | |
 
 ## Session log
@@ -37,5 +37,11 @@
 - On Windows Git Bash, `docker exec ... /opt/...` paths get rewritten; use `MSYS_NO_PATHCONV=1`.
 - The local `.env` had a reader password in `HARBOR_MCP_CONNECTION` that did not match `MCP_READER_PASSWORD`; it was synced (gitignored file, values not shown). Keep the two equal when changing either.
 - Expected-answer anchors for Phase 4 are the fingerprint constants in `tests/HarborSupply.Db.Tests/SeedTests.cs` (sales invoice total 23,669,600.17; AP bill total 15,633,431.91).
-- Next: Phase 4 (reconciliation and docs).
+- **2026-11-13 (Phase 4):** Reconciliation and docs.
+  - Delivered: `db/reports/q1..q5.sql` (reference reports on the `reporting` views, 2012-safe, no `GETDATE()`), `tests/HarborSupply.Db.Tests/ReconciliationTests.cs` (each report run through the real stdio MCP server and compared cell for cell with an independent base-table calculation as sa; pinned headline answers; guard/determinism check on the files), `db/reports/TRANSCRIPT.md` (real `claude -p` runs using only the harbor MCP tools), README reconciliation table, limits section.
+  - Verified: `dotnet test -m:1` 120/120 pass. Reference headlines: Q1 12,888,296.32; Q2 top customer Eastport Builders 317,351.52; Q3 312 invoices / 1,012,732.00; Q4 HS-PLM-0031, HS-FAS-0009, HS-ELE-0022, HS-HND-0003, HS-ELE-0014; Q5 1,770,371.07.
+  - Finding: Claude matched Q1, Q3, Q5 cold. On Q2 and Q4 it picked a different, stated interpretation (2026 YTD vs full 2025; partial Q4 vs Q3). With the basis stated in the question both match. Recorded honestly in README and transcript.
+  - A first reference-query bug (Q5 bucket edges in the test's independent SQL, not the report) was caught by the reconciliation test and fixed.
+  - Not done: demo clip (needs recording by owner), GitHub Actions CI (BRIEF §9), repo topics/pinning. Note `docs/` and `BRIEF.md` are in `.gitignore`; the transcript lives in `db/reports/` so it is publishable.
+- Next: record demo clip, add CI, then optional Phase 5.
 
