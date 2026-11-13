@@ -1,0 +1,5 @@
+* text=auto
+# sqlcmd in the Linux container and shell scripts need LF
+*.sql text eol=lf
+*.sh  text eol=lf
+*.yml text eol=lf
